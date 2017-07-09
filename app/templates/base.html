@@ -17,7 +17,7 @@
     </div>
     <div id="navbar" class="collapse navbar-collapse">
       <ul class="nav navbar-nav">
-        {% for item in ['projects', 'notes', 'tags', 'about'] %}
+        {% for item in ['notes', 'projects', 'tags', 'about'] %}
         <li {% if request.path[1:] == item %}class='active'{% endif %}>
           <a href="{{ url_for('main.' + item) }}">{{ item.capitalize() }}</a>
         </li>
@@ -26,6 +26,9 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
           <a href="#">Log In</a>
+        </li>
+        <li>
+          <a href="">Sign Up</a>
         </li>
       </ul> 
     </div>
