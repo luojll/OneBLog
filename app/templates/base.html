@@ -5,12 +5,12 @@
 {% block head %}
 {{ super() }}
 <!-- Custom style -->
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='blog.css') }}">
+<!-- <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='blog.css') }}"> -->
 {% endblock head %}
 
 {% block navbar %}
 <!-- Navbar -->
-<nav class="navbar navbar-default navbar-fixed-top">
+<nav class="navbar navbar-inverse navbar-fixed-top">
   <div class="container">
     <div class="navbar-header">
       <a class="navbar-brand" href="{{ url_for('main.index') }}">One Blog</a>
@@ -25,11 +25,15 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-          <a href="#">Log In</a>
+        {% if current_user.is_authenticated %}
+          <a href="{{ url_for('main.logout') }}">Log Out</a>
+        {% else %}
+          <a href="{{ url_for('main.login') }}">Log In</a>
         </li>
         <li>
-          <a href="">Sign Up</a>
+          <a href="{{ url_for('main.register') }}">Sign Up</a>
         </li>
+        {% endif %}
       </ul> 
     </div>
   </div>
@@ -38,6 +42,7 @@
 
 {% block content %}
 <!-- Flash message -->
+<div class="container" style="height: 70px"></div> <!-- TODO: find the root cause, why this div starts from height 0 -->
 <div class="container">
   {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
@@ -50,6 +55,7 @@
     {% endif %}
   {% endwith %}
 </div>
+
 <!-- Page Content -->
 <div class="container">
   {% block page_content %}
