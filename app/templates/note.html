@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block page_content %}
+<div class="blog-header">
+  <h1 class="blog-title">{{ note.title }}</h1>
+</div>
+<div class="col-md-10">
+    {{ note.markdown2html() }}
+</div>
+{% endblock page_content %}

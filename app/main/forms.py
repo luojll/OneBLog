@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms import StringField, TextAreaField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import Required, Length, Email, Regexp, EqualTo
 
 class LoginForm(FlaskForm):
@@ -20,3 +20,8 @@ class RegistrationForm(FlaskForm):
         Required(), EqualTo('password2', message='Passwords must match.')])
     password2 = PasswordField('Confirm password', validators=[Required()])
     submit = SubmitField('Register')
+
+class NoteForm(FlaskForm):
+    title = StringField('Title', validators=[Required(), Length(1, 100)])
+    tags = StringField('Tags (split with comma \',\')', validators=[Length(0, 100)])
+    content = TextAreaField('Content', validators=[Required()])

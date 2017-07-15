@@ -1,5 +1,7 @@
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask import Markup
 from flask_login import UserMixin
+from markdown import markdown
 from . import mongo, login_manager
 
 class Permission:
@@ -50,7 +52,7 @@ class User(UserMixin):
         self.password_hash = document[PASSWORD_HASH]
 
     def get_id(self):
-        return self.username
+        return self.email
 
     @classmethod
     def is_username_existed(cls, username):
@@ -81,6 +83,10 @@ class User(UserMixin):
             raise ValueError('Invalid argument')
 
     @classmethod
+    def count(cls):
+        return cls.collection.count()
+
+    @classmethod
     def update(cls, method, **kwargs):
         pass
 
@@ -93,19 +99,43 @@ def load_user(email):
     user = User(email=email)
     return user
 
-class Post(Resource):
-    collection = mongo.db.Posts
 
-    def __init__(self, document):
-        self.document = document
+# collection fields for Note
+INDEX = 'id'
+TITLE = 'title'
+TAGS = 'tags'
+CONTENT = 'content'
+COMMENT_ID = 'comment_id'
+
+class Note:
+    collection = mongo.db.Notes
+    collection.ensure_index('id', unique=True)
+
+    def __init__(self, index):
+        document = Note.get(index)
+        print('init: '+document[TITLE])
+        if not document:
+            return None
+        self.title = document[TITLE]
+        self.content = document[CONTENT]
+        self.tags = document[TAGS]
+
+    def markdown2html(self):
+        return Markup(markdown(self.content))
 
     @classmethod
-    def add(cls, postname=None, **kwargs):
-        pass
+    def add(cls, title=None, tags=None, content=None):
+        document = dict()
+        document[INDEX] = cls.count() + 1
+        document[TITLE] = title
+        document[CONTENT] = content
+        document[TAGS] = tags
+        cls.collection.insert_one(document)
+        return document[INDEX]
 
     @classmethod
-    def get(cls, **kwargs):
-        pass
+    def get(cls, index):
+        return cls.collection.find_one({INDEX: index})
 
     @classmethod
     def update(cls, method, **kwargs):
@@ -114,6 +144,10 @@ class Post(Resource):
     @classmethod
     def delete(cls, **kwargs):
         pass
+
+    @classmethod
+    def count(cls):
+        return cls.collection.count()
 
 class Project(Resource):
     collection = mongo.db.Projects

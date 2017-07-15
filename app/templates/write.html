@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Edit Post{% endblock %}
+
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static',filename='editormd/css/editormd.css') }}"/>
+{% endblock head %}
+
+{% block page_content %}
+    <div class="row">
+        <form method="post" action="{{ url_for('main.write') }}">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                {{ form.title.label }}
+                {% if form.title.errors %}
+                    {% for e in form.title.errors %}
+                        <p class="help-block">{{ e }}</p>
+                    {% endfor %}
+                {% endif %}
+                {{ form.title(class_='form-control') }}
+            </div>
+
+            <div class="form-group">
+                {{ form.tags.label }}
+                {% if form.tags.errors %}
+                    {% for e in form.tags.errors %}
+                        <p class="help-block">{{ e }}</p>
+                    {% endfor %}
+                {% endif %}
+                {{ form.tags(class_='form-control') }}
+            </div>
+
+            <div class="form-group">
+                {{ form.content.label }}
+                {% if form.content.errors %}
+                    {% for e in form.content.errors %}
+                        <p class="help-block">{{ e }}</p>
+                    {% endfor %}
+                {% endif %}
+                <div id="editormd" class="form-control">
+                    {{ form.content(style="display:none;") }}
+                </div>
+            </div>
+            <input class="btn btn-primary" type="submit" value="Submit">
+        </form>
+    </div>
+{% endblock page_content %}
+
+{% block scripts %}
+    <script src="{{ url_for('static',filename='js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static',filename='editormd/editormd.min.js') }}"></script>
+    <script type="text/javascript">
+        var editor;
+
+        $(function () {
+            editor = editormd("editormd", {
+                // width: "100%",
+                height: 640,
+                syncScrolling: "single",
+                path: "{{ url_for('static',filename='editormd/lib/') }}"
+            });
+        });
+    </script>
+{% endblock scripts %}

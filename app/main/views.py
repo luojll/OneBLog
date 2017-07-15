@@ -2,11 +2,11 @@ from flask import render_template, flash, redirect, url_for
 from flask_login import login_user, logout_user, login_required, \
                         current_user
 from . import main
-from .forms import LoginForm, RegistrationForm
+from .forms import LoginForm, RegistrationForm, NoteForm
 from manage import app
 
 with app.app_context(): #TODO: ugly, another way?
-    from ..models import User
+    from ..models import User, Note
 
 @main.route('/')
 def index():
@@ -66,6 +66,28 @@ def register():
         return redirect(url_for('main.login'))
     return render_template('register.html', form=form)
 
+@main.route('/write', methods=['GET', 'POST'])
+@login_required
+def write():
+    form = NoteForm()
+    if form.validate_on_submit():
+        title = form.title.data
+        tags = form.tags.data.strip().split(',')
+        content = form.content.data
+        index = Note.add(title=title, tags=tags, content=content)
+        print('add note, index: ' + str(index))
+    return render_template('write.html', form=form)
+
+@main.route('/note/<int:index>')
+def note(index):
+    note = Note(index)
+    if note:
+        print('title----')
+        print(note.title)
+        print('content----')
+        print(note.content)
+        return render_template('note.html', note=note)
+    return redirect(url_for('main.index'))
 
 
 

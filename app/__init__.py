@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_bootstrap import Bootstrap
-from flask_pymongo import PyMongo
 from flask_login import LoginManager
+from flask_pymongo import PyMongo
 from config import config
 
 bootstrap = Bootstrap()
