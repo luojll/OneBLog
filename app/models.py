@@ -1,8 +1,11 @@
+from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import Markup
 from flask_login import UserMixin
 from markdown import markdown
+from pymongo import ASCENDING, DESCENDING
 from . import mongo, login_manager
+from manage import app
 
 class Permission:
     COMMENT = 0x02
@@ -106,6 +109,8 @@ TITLE = 'title'
 TAGS = 'tags'
 CONTENT = 'content'
 COMMENT_ID = 'comment_id'
+ADDED_TIME = 'added_time'
+LAST_MODIFIED_TIME = 'last_modified_time'
 
 class Note:
     collection = mongo.db.Notes
@@ -116,6 +121,7 @@ class Note:
         print('init: '+document[TITLE])
         if not document:
             return None
+        self.index = document[INDEX]
         self.title = document[TITLE]
         self.content = document[CONTENT]
         self.tags = document[TAGS]
@@ -126,12 +132,25 @@ class Note:
     @classmethod
     def add(cls, title=None, tags=None, content=None):
         document = dict()
-        document[INDEX] = cls.count() + 1
+        document[INDEX] = cls.count()   # index starts from 0
         document[TITLE] = title
         document[CONTENT] = content
         document[TAGS] = tags
+        document[ADDED_TIME] = datetime.now()
+        document[LAST_MODIFIED_TIME] = document[ADDED_TIME]
         cls.collection.insert_one(document)
         return document[INDEX]
+
+    @classmethod
+    def get_notes(cls, start_index, show_cnt=app.config['NOTES_PER_PAGE']):
+        if start_index > Note.count():
+            return None
+        notes = []
+        i = Note.count() - start_index - 1
+        while i >= 0 and show_cnt > 0:
+            notes.append(Note(i))
+            i, show_cnt = i - 1, show_cnt - 1
+        return notes
 
     @classmethod
     def get(cls, index):

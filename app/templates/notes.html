@@ -1,1 +1,15 @@
 {% extends "base.html" %}
+
+{% block page_content %}
+<div class="post-list">
+    {% for note in notes %}
+    <div class="post-list-item">
+        <div class="post-content">
+            <h3 class="post-title">
+                {{ note.title }}
+            </h3>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock page_content %}

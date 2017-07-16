@@ -18,7 +18,13 @@ def projects():
 
 @main.route('/notes')
 def notes():
-    return render_template('notes.html')
+    return redirect(url_for('main.notes_index', start_index=0))
+
+@main.route('/notes/<int:start_index>')
+def notes_index(start_index):
+    notes = Note.get_notes(start_index)
+    print('notes len: ' + str(len(notes)))
+    return render_template('notes.html', notes=notes)
 
 @main.route('/tags')
 def tags():
@@ -76,6 +82,7 @@ def write():
         content = form.content.data
         index = Note.add(title=title, tags=tags, content=content)
         print('add note, index: ' + str(index))
+        return redirect(url_for('main.note', index=index))
     return render_template('write.html', form=form)
 
 @main.route('/note/<int:index>')

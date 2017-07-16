@@ -5,23 +5,28 @@
 {% block head %}
 {{ super() }}
 <!-- Custom style -->
-<!-- <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='blog.css') }}"> -->
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='blog.css') }}">
 {% endblock head %}
 
 {% block navbar %}
 <!-- Navbar -->
-<nav class="navbar navbar-inverse navbar-fixed-top">
+<nav class="navbar navbar-default navbar-fixed-top">
   <div class="container">
     <div class="navbar-header">
       <a class="navbar-brand" href="{{ url_for('main.index') }}">One Blog</a>
     </div>
-    <div id="navbar" class="collapse navbar-collapse">
+    <div id="navbar">
       <ul class="nav navbar-nav">
         {% for item in ['notes', 'projects', 'tags', 'about'] %}
         <li {% if request.path[1:] == item %}class='active'{% endif %}>
           <a href="{{ url_for('main.' + item) }}">{{ item.capitalize() }}</a>
         </li>
         {% endfor %}
+      </ul>
+      <ul class="navbar-form navbar-left">
+        <a href="{{ url_for('main.write') }}">
+          <button type="button" class="btn btn-primary">Create</button>
+        </a>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
@@ -42,7 +47,6 @@
 
 {% block content %}
 <!-- Flash message -->
-<div class="container" style="height: 70px"></div> <!-- TODO: find the root cause, why this div starts from height 0 -->
 <div class="container">
   {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
