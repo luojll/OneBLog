@@ -23,7 +23,6 @@ def notes():
 @main.route('/notes/<int:start_index>')
 def notes_index(start_index):
     notes = Note.get_notes(start_index)
-    print('notes len: ' + str(len(notes)))
     return render_template('notes.html', notes=notes)
 
 @main.route('/tags')
@@ -89,10 +88,6 @@ def write():
 def note(index):
     note = Note(index)
     if note:
-        print('title----')
-        print(note.title)
-        print('content----')
-        print(note.content)
         return render_template('note.html', note=note)
     return redirect(url_for('main.index'))
 

@@ -118,7 +118,6 @@ class Note:
 
     def __init__(self, index):
         document = Note.get(index)
-        print('init: '+document[TITLE])
         if not document:
             return None
         self.index = document[INDEX]
