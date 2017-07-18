@@ -18,7 +18,7 @@
     <div id="navbar">
       <ul class="nav navbar-nav">
         {% for item in ['notes', 'projects', 'tags', 'about'] %}
-        <li {% if request.path[1:] == item %}class='active'{% endif %}>
+        <li {% if request.path.split('/')[1] == item %}class='active'{% endif %}>
           <a href="{{ url_for('main.' + item) }}">{{ item.capitalize() }}</a>
         </li>
         {% endfor %}
