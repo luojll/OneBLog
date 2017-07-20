@@ -12,9 +12,10 @@ with app.app_context(): #TODO: ugly, another way?
 def index():
     return render_template('index.html')
 
-@main.route('/projects')
-def projects():
-    return render_template('projects.html')
+@main.route('/archive')
+def archive():
+    notes = Note.get_all_notes()
+    return render_template('archive.html', notes=notes)
 
 @main.route('/notes')
 def notes():

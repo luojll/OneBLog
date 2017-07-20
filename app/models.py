@@ -124,9 +124,15 @@ class Note:
         self.title = document[TITLE]
         self.content = document[CONTENT]
         self.tags = document[TAGS]
+        self.added_time = document[ADDED_TIME]
+        self.last_modified_time = document[LAST_MODIFIED_TIME]
 
     def markdown2html(self):
         return Markup(markdown(self.content))
+
+    @property
+    def str_added_time(self):
+        return self.added_time.strftime('%B %d, %Y')
 
     @classmethod
     def add(cls, title=None, tags=None, content=None):
@@ -149,6 +155,15 @@ class Note:
         while i >= 0 and show_cnt > 0:
             notes.append(Note(i))
             i, show_cnt = i - 1, show_cnt - 1
+        return notes
+
+    @classmethod
+    def get_all_notes(cls, key=lambda n: n.added_time, reverse=True):
+        total_num = Note.count()
+        notes = []
+        for i in range(total_num):
+            notes.append(Note(i))
+        notes.sort(key=key, reverse=reverse)
         return notes
 
     @classmethod

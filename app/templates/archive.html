@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>Archive</h1>
+</div>
+<div class="row">
+    <div class="col-xs-12">
+        <ul>
+            {% for note in notes %}
+            <li>
+                <span>{{ note.str_added_time }}</span>
+                >>
+                <a href="{{ url_for('main.note', index=note.index) }}">{{ note.title }}</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock page_content %}

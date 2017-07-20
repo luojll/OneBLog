@@ -1,10 +1,22 @@
 {% extends "base.html" %}
 
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+{% endblock head %}
+
 {% block page_content %}
-<div class="blog-header">
-  <h1 class="blog-title">{{ note.title }}</h1>
+<div class="page-header">
+  <h1>{{ note.title }}</h1>
 </div>
-<div class="col-md-10">
-    {{ note.markdown2html() }}
+<div class="row post-full">
+    <div class="col-md-12">
+        <div class="date">
+            <span>{{ note.str_added_time }}</span>
+        </div>
+        <div class="content">
+            {{ note.markdown2html() }}
+        </div>
+    </div>
 </div>
 {% endblock page_content %}
