@@ -1,6 +1,6 @@
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask import Markup
+from flask import Markup, abort
 from flask_login import UserMixin
 from markdown import markdown
 from pymongo import ASCENDING, DESCENDING
@@ -119,7 +119,7 @@ class Note:
     def __init__(self, index):
         document = Note.get(index)
         if not document:
-            return None
+            abort(403)
         self.index = document[INDEX]
         self.title = document[TITLE]
         self.content = document[CONTENT]
@@ -130,9 +130,18 @@ class Note:
     def markdown2html(self):
         return Markup(markdown(self.content))
 
+    def update(self):
+        dic = dict()
+        dic[TITLE] = self.title
+        dic[CONTENT] = self.content
+        dic[TAGS] = self.tags
+        dic[LAST_MODIFIED_TIME] = datetime.now()
+        self.collection.update({INDEX: self.index}, 
+                {'$set' : dic})
+
     @property
     def str_added_time(self):
-        return self.added_time.strftime('%B %d, %Y')
+        return self.added_time.strftime('%d %B %Y')
 
     @classmethod
     def add(cls, title=None, tags=None, content=None):
@@ -169,10 +178,6 @@ class Note:
     @classmethod
     def get(cls, index):
         return cls.collection.find_one({INDEX: index})
-
-    @classmethod
-    def update(cls, method, **kwargs):
-        pass
 
     @classmethod
     def delete(cls, **kwargs):

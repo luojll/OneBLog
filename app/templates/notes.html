@@ -1,12 +1,35 @@
 {% extends "base.html" %}
 
+{% block head %}
+{{ super() }}
+<!-- Custom style -->
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+{% endblock head %}
+
 {% block page_content %}
-<div class="blog-header">
-  <h1 class="blog-title"></h1>
-</div>
-<div class="col-md-12">
-    {% for note in notes %}
-    <a href="{{ url_for('main.note', index=note.index) }}"><h1>{{ note.title }}</h1></a>
-    {% endfor %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 blog-entries">
+        {% for note in notes %}
+            <h2>
+                <a href="{{ url_for('main.note', index=note.index) }}">
+                    {{ note.title }}
+                </a>
+            </h2>
+                <p>
+                    <span class="glyphicon glyphicon-time"></span>
+                    Posted by luojl on {{ note.str_added_time }}
+                </p>
+                <hr>
+                {{ note.markdown2html() }}
+        {% endfor %}
+        </div>
+        <div class="col-md-4">
+            <div class="well">
+                <h4>Blog Tags</h4>
+                <div class="row"></div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock page_content %}

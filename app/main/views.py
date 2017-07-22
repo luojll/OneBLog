@@ -10,7 +10,7 @@ with app.app_context(): #TODO: ugly, another way?
 
 @main.route('/')
 def index():
-    return render_template('index.html')
+    return redirect(url_for('main.notes_index', start_index=0))
 
 @main.route('/archive')
 def archive():
@@ -81,9 +81,31 @@ def write():
         tags = form.tags.data.strip().split(',')
         content = form.content.data
         index = Note.add(title=title, tags=tags, content=content)
-        print('add note, index: ' + str(index))
         return redirect(url_for('main.note', index=index))
     return render_template('write.html', form=form)
+
+@main.route('/edit/<int:index>', methods=['GET', 'POST'])
+@login_required
+def edit(index):
+    note = Note(index)
+
+    if not note:
+        abort(403)
+
+    form = NoteForm()
+    if form.validate_on_submit():
+        note.title = form.title.data
+        note.tags = form.tags.data.strip().split(',')
+        note.content = form.content.data
+        note.update()
+        flash('Edit Saved.', category='success')
+        return redirect(url_for('main.note', index=note.index))
+    form.title.data = note.title
+    tags_str = ','.join(note.tags)
+    if tags_str:
+        form.tags.data = tags_str
+    form.content.data = note.content
+    return render_template('edit.html', form=form, index=note.index)
 
 @main.route('/note/<int:index>')
 def note(index):

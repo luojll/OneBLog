@@ -28,6 +28,11 @@
         <a href="{{ url_for('main.write') }}">
           <button type="button" class="btn btn-primary">Create</button>
         </a>
+        {% if request.path.split('/')[1] == 'note' %}
+        <a href="{{ url_for('main.edit', index=request.path.split('/')[2]) }}">
+          <button type="button" class="btn btn-primary">Edit</button>
+        </a>
+        {% endif %}
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
