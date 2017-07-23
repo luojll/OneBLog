@@ -2,7 +2,7 @@ from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import Markup, abort
 from flask_login import UserMixin
-from markdown import markdown
+from markdown2 import markdown
 from pymongo import ASCENDING, DESCENDING
 from . import mongo, login_manager
 from manage import app
@@ -128,7 +128,7 @@ class Note:
         self.last_modified_time = document[LAST_MODIFIED_TIME]
 
     def markdown2html(self):
-        return Markup(markdown(self.content))
+        return Markup(markdown(self.content, extras=['fenced-code-blocks']))
 
     def update(self):
         dic = dict()
