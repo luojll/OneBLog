@@ -66,3 +66,22 @@
 .vi { color: #19177C } /* Name.Variable.Instance */
 .vm { color: #19177C } /* Name.Variable.Magic */
 .il { color: #666666 } /* Literal.Number.Integer.Long */
+
+pre {
+  display: block;
+  font-family: monospace;
+  background-color: #fff;
+  width: 60em;
+  margin: 4em auto;
+  padding: 0.5em;
+  border-radius: .25em;
+  box-shadow: .1em .1em .5em rgba(0,0,0,.45);
+  line-height: 0;
+  border-left: 5px solid #558abb;
+  float: left;
+}
+
+pre span {
+    display: inline;
+    line-height: 1.67rem;
+}
