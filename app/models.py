@@ -128,7 +128,7 @@ class Note:
         self.last_modified_time = document[LAST_MODIFIED_TIME]
 
     def markdown2html(self):
-        return Markup(markdown(self.content, extras=['fenced-code-blocks']))
+        return Markup(markdown(self.content, extras=['fenced-code-blocks', 'codehilite']))
 
     def update(self):
         dic = dict()
