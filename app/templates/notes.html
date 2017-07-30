@@ -10,7 +10,7 @@
 {% block page_content %}
 <div class="container">
     <div class="row">
-        <div class="col-md-8 blog-entries">
+        <div class="col-md-12 blog-entries">
         {% for note in notes %}
             <h2>
                 <a href="{{ url_for('main.note', index=note.index) }}">
@@ -24,12 +24,6 @@
                 <hr>
                 {{ note.markdown2html() }}
         {% endfor %}
-        </div>
-        <div class="col-md-4">
-            <div class="well">
-                <h4>Blog Tags</h4>
-                <div class="row"></div>
-            </div>
         </div>
     </div>
 </div>
