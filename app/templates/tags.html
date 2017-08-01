@@ -4,4 +4,12 @@
 <div class="page-header">
     <h1>Tags</h1>
 </div>
+
+<div class="row">
+    {% for tag in tags %}
+        {% if tag.notes_cnt > 0 %}
+            {{ tag.name }} ({{ tag.notes_cnt }})
+        {% endif %}
+    {% endfor %}
+</div>
 {% endblock page_content %}

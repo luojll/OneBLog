@@ -23,5 +23,8 @@ class RegistrationForm(FlaskForm):
 
 class NoteForm(FlaskForm):
     title = StringField('Title', validators=[Required(), Length(1, 100)])
-    tags = StringField('Tags (split with comma \',\')', validators=[Length(0, 100)])
+    tags = StringField('Tags (split with comma \',\')', validators=[Length(0, 100), 
+                                          Regexp('[A-Za-z0-9_., ]*$', 0,
+                                          'Tag must have only letters, '
+                                          'numbers, dots or underscores')])
     content = TextAreaField('Content', validators=[Required()])

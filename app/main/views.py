@@ -6,7 +6,7 @@ from .forms import LoginForm, RegistrationForm, NoteForm
 from manage import app
 
 with app.app_context(): #TODO: ugly, another way?
-    from ..models import User, Note
+    from ..models import User, Note, Tag
 
 @main.route('/')
 def index():
@@ -28,7 +28,8 @@ def notes_index(start_index):
 
 @main.route('/tags')
 def tags():
-    return render_template('tags.html')
+    tags = Tag.get_all_tags()
+    return render_template('tags.html', tags=tags)
 
 @main.route('/about')
 def about():
@@ -78,9 +79,10 @@ def write():
     form = NoteForm()
     if form.validate_on_submit():
         title = form.title.data
-        tags = form.tags.data.strip().split(',')
+        tags = form.tags.data.replace(" ", "").strip(',').split(',')
         content = form.content.data
-        index = Note.add(title=title, tags=tags, content=content)
+        author = current_user.username
+        index = Note.add(title=title, tags=tags, content=content, author=author)
         return redirect(url_for('main.note', index=index))
     return render_template('write.html', form=form)
 
@@ -94,10 +96,10 @@ def edit(index):
 
     form = NoteForm()
     if form.validate_on_submit():
-        note.title = form.title.data
-        note.tags = form.tags.data.strip().split(',')
-        note.content = form.content.data
-        note.update()
+        title = form.title.data
+        tags = form.tags.data.replace(" ", "").strip(',').split(',')
+        content = form.content.data
+        note.update(title=title, content=content, tags=tags)
         flash('Edit Saved.', category='success')
         return redirect(url_for('main.note', index=note.index))
     form.title.data = note.title

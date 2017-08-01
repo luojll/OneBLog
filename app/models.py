@@ -13,28 +13,6 @@ class Permission:
     WRITE_ARTICLES = 0x08
     ADMINISTER = 0x80
 
-class Resource:
-
-    @classmethod
-    def add(cls, **kwargs):
-        # Insert a new document to collection
-        return NotImplemented()
-
-    @classmethod
-    def get(cls, **kwargs):
-        # Get a document from collection
-        return NotImplemented()
-
-    @classmethod
-    def update(cls, **kwargs):
-        # Update a document in collection
-        return NotImplemented()
-
-    @classmethod
-    def delete(cls, **kwargs):
-        # Delete a document from collection
-        return NotImplemented()
-
 # collection fields for User
 USERNAME = 'username'
 EMAIL = 'email'
@@ -106,6 +84,7 @@ def load_user(email):
 # collection fields for Note
 INDEX = 'id'
 TITLE = 'title'
+AUTHOR = 'author'
 TAGS = 'tags'
 CONTENT = 'content'
 COMMENT_ID = 'comment_id'
@@ -122,6 +101,7 @@ class Note:
             abort(403)
         self.index = document[INDEX]
         self.title = document[TITLE]
+        # self.author = document[author]
         self.content = document[CONTENT]
         self.tags = document[TAGS]
         self.added_time = document[ADDED_TIME]
@@ -130,28 +110,45 @@ class Note:
     def markdown2html(self):
         return Markup(markdown(self.content, extras=['fenced-code-blocks', 'codehilite']))
 
-    def update(self):
+    def update(self, title=None, content=None, tags=None):
         dic = dict()
-        dic[TITLE] = self.title
-        dic[CONTENT] = self.content
-        dic[TAGS] = self.tags
+        dic[TITLE] = title
+        dic[CONTENT] = content
+        self.update_tags(self.tags, tags)
+        dic[TAGS] = tags
         dic[LAST_MODIFIED_TIME] = datetime.now()
         self.collection.update({INDEX: self.index}, 
                 {'$set' : dic})
+
+    def update_tags(self, old, new):
+        removed = set(old) - set(new)
+        added = set(new) - set(old)
+
+        for tag in removed:
+            Tag.remove(tag, self.index)
+
+        for tag in added:
+            Tag.add(tag, self.index)
 
     @property
     def str_added_time(self):
         return self.added_time.strftime('%d %B %Y')
 
     @classmethod
-    def add(cls, title=None, tags=None, content=None):
+    def add(cls, title=None, tags=None, content=None, author=None):
         document = dict()
         document[INDEX] = cls.count()   # index starts from 0
         document[TITLE] = title
+        document[AUTHOR] = author
         document[CONTENT] = content
         document[TAGS] = tags
         document[ADDED_TIME] = datetime.now()
         document[LAST_MODIFIED_TIME] = document[ADDED_TIME]
+        
+        # Add tags
+        for tag in tags:
+            Tag.add(tag, document[INDEX])
+
         cls.collection.insert_one(document)
         return document[INDEX]
 
@@ -187,14 +184,56 @@ class Note:
     def count(cls):
         return cls.collection.count()
 
-class Project(Resource):
+class Project:
     collection = mongo.db.Projects
 
-class Comment(Resource):
+class Comment:
     collection = mongo.db.Comments
 
-class Tag(Resource):
-    collection = mongo.db.Tags
 
-class Metric(Resource):
+TAGNAME = 'name'
+NOTE_INDEX = 'indexes'
+class Tag:
+    collection = mongo.db.Tags
+    collection.ensure_index(TAGNAME, unique=True)
+
+    def __init__(self, tagname, indexes):
+        self.name = tagname
+        self.indexes = indexes
+
+    @property
+    def notes_cnt(self):
+        return len(self.indexes)
+
+    @classmethod
+    def add(cls, tagname, note_index):
+        if tagname == '':
+            return
+        document = cls.collection.find_one({TAGNAME: tagname})
+        if document:    # Tag exists
+            cls.collection.update({TAGNAME: tagname}, 
+                    {'$addToSet': {NOTE_INDEX: note_index}})
+        else:
+            document = {TAGNAME: tagname, NOTE_INDEX: [note_index]}
+            cls.collection.insert_one(document)
+
+    @classmethod
+    def remove(cls, tagname, note_index):
+        document = cls.collection.find_one({TAGNAME: tagname})
+        if document:
+            cls.collection.update({TAGNAME: tagname}, 
+                    {'$pull': {NOTE_INDEX: note_index}})
+        else:
+            # Should not happen
+            pass
+
+    @classmethod
+    def get_all_tags(cls):
+        tags = []
+        for document in cls.collection.find():
+            tag = Tag(document[TAGNAME], document[NOTE_INDEX])
+            tags.append(tag)
+        return tags
+
+class Metric:
     collection = mongo.db.Metric
