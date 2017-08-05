@@ -111,7 +111,7 @@ class Note:
         return Markup(markdown(self.content, extras=['fenced-code-blocks', 'codehilite']))
 
     def update(self, title=None, content=None, tags=None):
-        assert isintance(tags, list), 'tags should be a list of str'
+        assert isinstance(tags, list), 'tags should be a list of str'
 
         dic = dict()
         dic[TITLE] = title
