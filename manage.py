@@ -2,6 +2,7 @@ import os
 
 from app import create_app, mongo
 from flask_script import Manager, Shell
+import Helpers
 
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 manager = Manager(app)
@@ -20,6 +21,11 @@ def delete_all_db():
     User.collection.delete_many({})
     Note.collection.delete_many({})
     Tag.collection.delete_many({})
+
+@manager.command
+def add_test_data():
+    delete_all_db()
+    Helpers.add_test_data(User, Note, Tag)
 
 if __name__ == '__main__':
     manager.run()

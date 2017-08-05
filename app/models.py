@@ -101,7 +101,7 @@ class Note:
             abort(403)
         self.index = document[INDEX]
         self.title = document[TITLE]
-        # self.author = document[author]
+        self.author = document[AUTHOR]
         self.content = document[CONTENT]
         self.tags = document[TAGS]
         self.added_time = document[ADDED_TIME]
@@ -111,6 +111,8 @@ class Note:
         return Markup(markdown(self.content, extras=['fenced-code-blocks', 'codehilite']))
 
     def update(self, title=None, content=None, tags=None):
+        assert isintance(tags, list), 'tags should be a list of str'
+
         dic = dict()
         dic[TITLE] = title
         dic[CONTENT] = content
@@ -136,6 +138,8 @@ class Note:
 
     @classmethod
     def add(cls, title=None, tags=None, content=None, author=None):
+        assert isinstance(tags, list), 'tags should be a list of str'
+
         document = dict()
         document[INDEX] = cls.count()   # index starts from 0
         document[TITLE] = title
@@ -143,7 +147,7 @@ class Note:
         document[CONTENT] = content
         document[TAGS] = tags
         document[ADDED_TIME] = datetime.now()
-        document[LAST_MODIFIED_TIME] = document[ADDED_TIME]
+        document[LAST_MODIFIED_TIME] = datetime.now()
         
         # Add tags
         for tag in tags:
