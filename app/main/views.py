@@ -1,4 +1,4 @@
-from flask import render_template, flash, redirect, url_for
+from flask import render_template, flash, redirect, url_for, abort
 from flask_login import login_user, logout_user, login_required, \
                         current_user
 from . import main
@@ -25,6 +25,13 @@ def notes():
 def notes_index(start_index):
     notes = Note.get_notes(start_index)
     return render_template('notes.html', notes=notes)
+
+@main.route('/tag/<tagname>')
+def tag(tagname):
+    notes = Tag.get_notes_with_tag(tagname)
+    if not notes:
+        abort(404)
+    return render_template('tag.html', tag=tagname, notes=notes)
 
 @main.route('/tags')
 def tags():

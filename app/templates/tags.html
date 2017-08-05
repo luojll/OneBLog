@@ -8,7 +8,7 @@
 <div class="row">
     {% for tag in tags %}
         {% if tag.notes_cnt > 0 %}
-            {{ tag.name }} ({{ tag.notes_cnt }})
+            <a href="{{ url_for('main.tag', tagname=tag.name) }}">{{ tag.name }} ({{ tag.notes_cnt }})</a>
         {% endif %}
     {% endfor %}
 </div>

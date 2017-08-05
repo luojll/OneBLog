@@ -206,6 +206,17 @@ class Tag:
         return len(self.indexes)
 
     @classmethod
+    def get_notes_with_tag(cls, tag):
+        document = cls.collection.find_one({TAGNAME: tag})
+        if not document or len(document[NOTE_INDEX]) == 0:
+            return None
+        notes = []
+        for index in document[NOTE_INDEX]:
+            notes.append(Note(index))
+        notes.sort(key=lambda n: n.added_time, reverse=True)
+        return notes
+
+    @classmethod
     def add(cls, tagname, note_index):
         if tagname == '':
             return
