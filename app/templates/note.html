@@ -7,8 +7,11 @@
 <div class="row post-full">
     <div class="col-md-12">
         <div class="date">
-            <span class="glyphicon glyphicon-time"></span>
             <span>{{ note.str_added_time }}</span>
+            •
+            {% for tag in note.tags %}
+            <a href="{{ url_for('main.tag', tagname=tag) }}">{{ tag }}</a>
+            {% endfor %}
         </div>
         <div class="content">
             {{ note.markdown2html() }}
