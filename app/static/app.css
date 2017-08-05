@@ -6,6 +6,34 @@ ul.note-list {
     /*line-height: 1.6;*/
 }
 
+ul.tag-list {
+    display: block;
+    list-style: none;
+}
+
+ul.tag-list li {
+    display: inline;
+}
+
+ul.tag-list li a {
+    border: 1px solid;
+    display: inline-block;
+    padding: .3rem .75rem .3rem 1.25rem;
+    border-radius: 2.5rem
+}
+
+ul.tag-list li a span {
+    background-color: #009cde;
+    display: inline-block;
+    height: 1.6em;
+    align-content: center;
+    min-width: 1.2em;
+    font-size: 0.8em;
+    text-align: center;
+    border-radius: 2rem;
+    color: #fff;
+}
+
 body {
     font-size: 200%;
 }

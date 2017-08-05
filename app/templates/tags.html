@@ -6,10 +6,14 @@
 </div>
 
 <div class="row">
+    <ul class="tag-list">
     {% for tag in tags %}
         {% if tag.notes_cnt > 0 %}
-            <a href="{{ url_for('main.tag', tagname=tag.name) }}">{{ tag.name }} ({{ tag.notes_cnt }})</a>
+            <li>
+                <a href="{{ url_for('main.tag', tagname=tag.name) }}">{{ tag.name }} <span>{{ tag.notes_cnt }}</span></a>
+            </li>
         {% endif %}
     {% endfor %}
+    </ul>
 </div>
 {% endblock page_content %}
