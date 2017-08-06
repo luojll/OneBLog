@@ -9,6 +9,7 @@ ul.note-list {
 ul.tag-list {
     display: block;
     list-style: none;
+    padding-left: 0px;
 }
 
 ul.tag-list li {

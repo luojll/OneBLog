@@ -9,8 +9,6 @@
         <ul class="note-list">
             {% for note in notes %}
             <li>
-                <span>{{ note.str_added_time }}</span>
-                >>
                 <a href="{{ url_for('main.note', index=note.index) }}">{{ note.title }}</a>
             </li>
             {% endfor %}
